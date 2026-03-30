@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Viditec — Reporte de Productos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Dashboard de Productos — Viditec</h1>
+    <div id="controles">
+      <button id="btn-actualizar" onclick="location.reload()">&#x21bb; Actualizar</button>
+      <span id="estado">Cargando...</span>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <section id="seccion-imp">
+      <h2>Instrumentos de Medición</h2>
+      <h3>Categorías solicitadas</h3>
+      <div id="tabla-imp-solicitadas"></div>
+      <h3>Categorías NO solicitadas (con productos activos)</h3>
+      <div id="tabla-imp-no-solicitadas"></div>
+    </section>
+
+    <section id="seccion-av">
+      <h2>Audio y Video Profesional</h2>
+      <h3>Categorías solicitadas</h3>
+      <div id="tabla-av-solicitadas"></div>
+      <h3>Categorías NO solicitadas (con productos activos)</h3>
+      <div id="tabla-av-no-solicitadas"></div>
+    </section>
+
+    <section id="seccion-shopify">
+      <h2>Productos en Shopify — Instrumentos de Medición</h2>
+      <div id="shopify-stats"></div>
+      <div id="shopify-filtros">
+        <input type="text" id="shopify-buscar" placeholder="Buscar por título, vendor, SKU…">
+        <select id="shopify-filtro-status">
+          <option value="">Todos los status</option>
+          <option value="active">Active</option>
+          <option value="draft">Draft</option>
+          <option value="archived">Archived</option>
+        </select>
+        <select id="shopify-filtro-vendor">
+          <option value="">Todos los vendors</option>
+        </select>
+        <button id="btn-shopify" onclick="cargarProductosShopify()">🛍️ Cargar desde Shopify</button>
+      </div>
+      <div id="tabla-shopify"><p class="loading-msg">Presioná "Cargar desde Shopify" para obtener los productos.</p></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
