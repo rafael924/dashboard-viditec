@@ -66,6 +66,9 @@ const HUERFANAS = {
   '167': 'PROYECTORS Y PANTALLAS',
 };
 
+// ── Cache global de productos (se llena en iniciar()) ────────
+var _todosLosProductos = [];
+
 // ── Utilidades ──────────────────────────────────────────────
 
 /** Aplana un árbol de categorías recursivamente → Map(id → name) */
@@ -89,7 +92,7 @@ function contarPorCategoria(productos) {
   return conteo;
 }
 
-/** Genera HTML de tabla */
+/** Genera HTML de tabla (filas clickeables) */
 function renderTabla(filas, titulo) {
   if (filas.length === 0) {
     return '<p class="loading-msg">No hay categorías para mostrar.</p>';
@@ -106,7 +109,7 @@ function renderTabla(filas, titulo) {
 
   filas.forEach(function (f) {
     total += f.count;
-    html += '<tr>' +
+    html += '<tr class="fila-clickeable" data-cat-id="' + esc(f.id) + '" data-cat-nombre="' + esc(f.martin) + '" title="Ver productos de esta categoría">' +
       '<td>' + esc(f.martin) + '</td>' +
       '<td>' + esc(f.erp) + '</td>' +
       '<td>' + esc(f.id) + '</td>' +
@@ -126,6 +129,44 @@ function esc(s) {
   var d = document.createElement('div');
   d.textContent = s;
   return d.innerHTML;
+}
+
+// ── Popup de productos por categoría ───────────────────────
+
+function abrirPopupCategoria(catId, catNombre) {
+  var productos = _todosLosProductos.filter(function (p) {
+    return p.categoryId === catId;
+  });
+
+  var popup = document.getElementById('popup-categoria');
+  var titulo = document.getElementById('popup-titulo');
+  var cuerpo = document.getElementById('popup-cuerpo');
+
+  titulo.textContent = catNombre + '  (id: ' + catId + ')  — ' + productos.length + ' producto(s)';
+  cuerpo.textContent = JSON.stringify(productos, null, 2);
+
+  popup.classList.add('popup-visible');
+  document.body.classList.add('popup-open');
+}
+
+function cerrarPopupCategoria() {
+  var popup = document.getElementById('popup-categoria');
+  popup.classList.remove('popup-visible');
+  document.body.classList.remove('popup-open');
+}
+
+/** Delega el click en filas de cualquier tabla de categorías */
+function bindFilasClickeables() {
+  document.addEventListener('click', function (e) {
+    var fila = e.target.closest('tr.fila-clickeable');
+    if (!fila) return;
+    abrirPopupCategoria(fila.dataset.catId, fila.dataset.catNombre);
+  });
+
+  // Cerrar con Escape
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') cerrarPopupCategoria();
+  });
 }
 
 // ── Lógica principal ────────────────────────────────────────
@@ -160,6 +201,8 @@ async function iniciar() {
   }
 
   var productos = datos.productos.items || datos.productos;
+  _todosLosProductos = productos; // guardar para el popup
+
   var mapaImp   = aplanarCategorias(datos.categorias_imp);
   var mapaAv    = aplanarCategorias(datos.categorias);
   var conteo    = contarPorCategoria(productos);
@@ -223,7 +266,10 @@ async function iniciar() {
 }
 
 // ── Arrancar ────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', iniciar);
+document.addEventListener('DOMContentLoaded', function () {
+  iniciar();
+  bindFilasClickeables();
+});
 
 // ── Shopify: productos de "Instrumentos de Medición" ────────
 
