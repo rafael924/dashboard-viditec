@@ -52,6 +52,18 @@
     </section>
   </main>
 
+  <!-- ── Popup productos por categoría ── -->
+  <div id="popup-categoria" role="dialog" aria-modal="true" aria-labelledby="popup-titulo">
+    <div id="popup-inner">
+      <div id="popup-header">
+        <span id="popup-titulo"></span>
+        <button id="popup-cerrar" onclick="cerrarPopupCategoria()" title="Cerrar">&times;</button>
+      </div>
+      <pre id="popup-cuerpo"></pre>
+    </div>
+    <div id="popup-backdrop" onclick="cerrarPopupCategoria()"></div>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>
